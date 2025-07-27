@@ -6,7 +6,10 @@ router = DefaultRouter()
 router.register('project', ProjectViewSet, basename='project')
 router.register('projectmanager', ProjectManagerViewSet, basename='projectmanager')
 
-urlpatterns = router.urls
+# Combine manual paths with router URLs - registration is a single action, not CRUD
+urlpatterns = [
+    path('api/register/', register_user, name='register_user'),
+] + router.urls
 
 
 # urlpatterns = [
