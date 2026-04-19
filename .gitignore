@@ -181,4 +181,5 @@ yarn-error.log*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db
+Thumbs.db# Uploaded media files (contain real user data)
+backend/media/
