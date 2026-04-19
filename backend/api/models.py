@@ -28,6 +28,87 @@ class Project(models.Model):
         return self.name
 
 
+class Tenant(models.Model):
+    property = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tenants')
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    lease_start = models.DateField()
+    lease_end = models.DateField()
+    rent_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    is_current = models.BooleanField(default=True)
+    notes = models.TextField(blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.property.name}"
+
+
+class Applicant(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('withdrawn', 'Withdrawn'),
+    ]
+    property = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='applicants')
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    application_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.property.name}"
+
+
+class Appliance(models.Model):
+    STATUS_CHOICES = [
+        ('working', 'Working'),
+        ('needs_repair', 'Needs Repair'),
+        ('replaced', 'Replaced'),
+    ]
+    property = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='appliances')
+    name = models.CharField(max_length=200)
+    brand = models.CharField(max_length=100, blank=True, null=True)
+    model_number = models.CharField(max_length=100, blank=True, null=True)
+    purchase_date = models.DateField(blank=True, null=True)
+    warranty_expiry = models.DateField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='working')
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.property.name}"
+
+
+class MaintenanceRequest(models.Model):
+    PRIORITY_CHOICES = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('emergency', 'Emergency'),
+    ]
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    property = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='maintenance_requests')
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    completed_date = models.DateField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.property.name}"
+
+
 class LegalDocument(models.Model):
     DOCUMENT_TYPES = [
         ('lease', 'Lease Agreement'),

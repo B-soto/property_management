@@ -127,6 +127,190 @@ def register_user(request):
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def get_property_or_403(request, property_id):
+    from django.db.models import Q
+    try:
+        return Project.objects.get(Q(id=property_id) & (Q(owner=request.user) | Q(owner__isnull=True))), None
+    except Project.DoesNotExist:
+        return None, Response({'error': 'Property not found or access denied'}, status=404)
+
+
+class TenantViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = TenantSerializer
+
+    def list(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        is_current = request.query_params.get('is_current')
+        qs = Tenant.objects.filter(property=prop)
+        if is_current is not None:
+            qs = qs.filter(is_current=is_current.lower() == 'true')
+        return Response(self.serializer_class(qs, many=True).data)
+
+    def create(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(property=prop)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=400)
+
+    def retrieve(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            return Response(self.serializer_class(Tenant.objects.get(pk=pk, property=prop)).data)
+        except Tenant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    def update(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            tenant = Tenant.objects.get(pk=pk, property=prop)
+            serializer = self.serializer_class(tenant, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except Tenant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    def destroy(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            Tenant.objects.get(pk=pk, property=prop).delete()
+            return Response(status=204)
+        except Tenant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+
+class ApplicantViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ApplicantSerializer
+
+    def list(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        return Response(self.serializer_class(Applicant.objects.filter(property=prop), many=True).data)
+
+    def create(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(property=prop)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=400)
+
+    def update(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            applicant = Applicant.objects.get(pk=pk, property=prop)
+            serializer = self.serializer_class(applicant, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except Applicant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    def destroy(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            Applicant.objects.get(pk=pk, property=prop).delete()
+            return Response(status=204)
+        except Applicant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+
+class ApplianceViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ApplianceSerializer
+
+    def list(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        return Response(self.serializer_class(Appliance.objects.filter(property=prop), many=True).data)
+
+    def create(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(property=prop)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=400)
+
+    def update(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            appliance = Appliance.objects.get(pk=pk, property=prop)
+            serializer = self.serializer_class(appliance, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except Appliance.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    def destroy(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            Appliance.objects.get(pk=pk, property=prop).delete()
+            return Response(status=204)
+        except Appliance.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+
+class MaintenanceRequestViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = MaintenanceRequestSerializer
+
+    def list(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        return Response(self.serializer_class(MaintenanceRequest.objects.filter(property=prop), many=True).data)
+
+    def create(self, request, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(property=prop)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=400)
+
+    def update(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            req = MaintenanceRequest.objects.get(pk=pk, property=prop)
+            serializer = self.serializer_class(req, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except MaintenanceRequest.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    def destroy(self, request, pk=None, property_id=None):
+        prop, err = get_property_or_403(request, property_id)
+        if err: return err
+        try:
+            MaintenanceRequest.objects.get(pk=pk, property=prop).delete()
+            return Response(status=204)
+        except MaintenanceRequest.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+
 class LegalDocumentViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LegalDocumentSerializer
