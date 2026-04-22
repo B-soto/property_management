@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Card, CardContent, Button, Grid, Dialog, DialogTitle,
-  DialogContent, DialogActions, TextField, Chip, IconButton, Alert, Snackbar,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
+  Box, Typography, Card, CardContent, Button, Dialog, DialogTitle,
+  DialogContent, DialogActions, TextField, Chip, IconButton, Alert,
+  Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
-import { People as TenantsIcon, Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import {
+  People as TenantsIcon, Add as AddIcon, Delete as DeleteIcon,
+  Edit as EditIcon, VpnKey as LoginIcon, CheckCircle as ActiveIcon
+} from '@mui/icons-material';
 import AxiosInstance from '../Axios';
 
 const emptyForm = { name: '', email: '', phone: '', lease_start: '', lease_end: '', rent_amount: '', notes: '' };
+const emptyLoginForm = { username: '', password: '' };
 
 const CurrentTenants = ({ property }) => {
   const [tenants, setTenants] = useState([]);
@@ -15,6 +19,12 @@ const CurrentTenants = ({ property }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTenant, setEditingTenant] = useState(null);
   const [form, setForm] = useState(emptyForm);
+
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const [loginTenant, setLoginTenant] = useState(null);
+  const [loginForm, setLoginForm] = useState(emptyLoginForm);
+  const [loginLoading, setLoginLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   useEffect(() => { fetchTenants(); }, [property.id]);
@@ -49,9 +59,7 @@ const CurrentTenants = ({ property }) => {
       setDialogOpen(false);
       fetchTenants();
     } catch (err) {
-      const msg = err.response?.data ? JSON.stringify(err.response.data) : 'Error saving tenant';
-      console.error('Tenant save error:', err.response?.data);
-      showSnackbar(msg, 'error');
+      showSnackbar(err.response?.data ? JSON.stringify(err.response.data) : 'Error saving tenant', 'error');
     }
   };
 
@@ -62,6 +70,26 @@ const CurrentTenants = ({ property }) => {
       showSnackbar('Tenant removed', 'success');
       fetchTenants();
     } catch { showSnackbar('Error removing tenant', 'error'); }
+  };
+
+  const openLoginDialog = (tenant) => {
+    setLoginTenant(tenant);
+    setLoginForm(emptyLoginForm);
+    setLoginDialogOpen(true);
+  };
+
+  const handleCreateLogin = async () => {
+    setLoginLoading(true);
+    try {
+      await AxiosInstance.post(`/project/${property.id}/tenants/${loginTenant.id}/create-login/`, loginForm);
+      showSnackbar(`Login created for ${loginTenant.name}`, 'success');
+      setLoginDialogOpen(false);
+      fetchTenants();
+    } catch (err) {
+      showSnackbar(err.response?.data?.error || 'Error creating login', 'error');
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
   const showSnackbar = (message, severity) => setSnackbar({ open: true, message, severity });
@@ -94,6 +122,7 @@ const CurrentTenants = ({ property }) => {
                     <TableCell>Lease Start</TableCell>
                     <TableCell>Lease End</TableCell>
                     <TableCell>Rent/mo</TableCell>
+                    <TableCell>Portal</TableCell>
                     <TableCell align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -106,6 +135,21 @@ const CurrentTenants = ({ property }) => {
                       <TableCell>{t.lease_start}</TableCell>
                       <TableCell>{t.lease_end}</TableCell>
                       <TableCell>{t.rent_amount ? `$${t.rent_amount}` : '—'}</TableCell>
+                      <TableCell>
+                        {t.has_login ? (
+                          <Chip icon={<ActiveIcon />} label="Login Active" color="success" size="small" />
+                        ) : (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<LoginIcon />}
+                            onClick={() => openLoginDialog(t)}
+                            sx={{ fontSize: '0.75rem' }}
+                          >
+                            Create Login
+                          </Button>
+                        )}
+                      </TableCell>
                       <TableCell align="right">
                         <IconButton size="small" onClick={() => handleOpen(t)}><EditIcon fontSize="small" /></IconButton>
                         <IconButton size="small" color="error" onClick={() => handleDelete(t.id)}><DeleteIcon fontSize="small" /></IconButton>
@@ -119,6 +163,7 @@ const CurrentTenants = ({ property }) => {
         </CardContent>
       </Card>
 
+      {/* Add / Edit Tenant Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{editingTenant ? 'Edit Tenant' : 'Add Tenant'}</DialogTitle>
         <DialogContent>
@@ -136,6 +181,43 @@ const CurrentTenants = ({ property }) => {
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleSave} disabled={!form.name || !form.lease_start || !form.lease_end}>
             {editingTenant ? 'Save Changes' : 'Add Tenant'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Create Login Dialog */}
+      <Dialog open={loginDialogOpen} onClose={() => setLoginDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Create Login for {loginTenant?.name}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            This will create a tenant portal account. Share these credentials with your tenant.
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              required
+              label="Username"
+              value={loginForm.username}
+              onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
+              autoComplete="off"
+            />
+            <TextField
+              required
+              label="Password"
+              type="password"
+              value={loginForm.password}
+              onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
+              autoComplete="new-password"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLoginDialogOpen(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleCreateLogin}
+            disabled={!loginForm.username || !loginForm.password || loginLoading}
+          >
+            {loginLoading ? 'Creating...' : 'Create Login'}
           </Button>
         </DialogActions>
       </Dialog>

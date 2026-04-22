@@ -85,7 +85,7 @@ const Register = () => {
         overflow: "hidden"
       }}>
         <Box sx={{ 
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          background: "linear-gradient(135deg, #0c2340 0%, #0e4f6e 100%)",
           color: "white",
           p: 4,
           textAlign: "center"
@@ -159,9 +159,9 @@ const Register = () => {
                   py: 1.5,
                   borderRadius: 2,
                   fontWeight: 600,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: "linear-gradient(135deg, #0c2340 0%, #0e4f6e 100%)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)"
+                    background: "linear-gradient(135deg, #0e7490 0%, #0891b2 100%)"
                   }
                 }}
               >

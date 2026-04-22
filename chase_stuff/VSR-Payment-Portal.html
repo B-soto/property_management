@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="VSR Payments"/>
+<meta name="theme-color" content="#0d1117"/>
+<title>VSR Property Management — Payment Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy: #0d1117;
+  --navy-2: #161b22;
+  --navy-3: #1c2333;
+  --navy-4: #21262d;
+  --navy-5: #2d333b;
+  --gold: #d4a843;
+  --gold-light: #f0c96e;
+  --gold-dim: rgba(212,168,67,0.15);
+  --gold-border: rgba(212,168,67,0.3);
+  --blue: #3b7dd8;
+  --blue-dim: rgba(59,125,216,0.15);
+  --blue-border: rgba(59,125,216,0.4);
+  --green: #3fb950;
+  --green-dim: rgba(63,185,80,0.12);
+  --green-border: rgba(63,185,80,0.3);
+  --red: #f85149;
+  --red-dim: rgba(248,81,73,0.12);
+  --amber: #d29922;
+  --amber-dim: rgba(210,153,34,0.15);
+  --text: #e6edf3;
+  --text-2: #8b949e;
+  --text-3: #484f58;
+  --border: rgba(255,255,255,0.08);
+  --border-2: rgba(255,255,255,0.14);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--navy);color:var(--text);
+  font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100%;
+  overscroll-behavior:none;
+}
+
+/* ── Top bar ── */
+.topbar{
+  background:var(--navy-2);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+  padding-top:var(--safe-top);
+  display:flex;align-items:center;
+  height:calc(56px + var(--safe-top));
+  position:sticky;top:0;z-index:200;
+  gap:12px;
+}
+
+.logo{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.logo-mark{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:#0d1117;
+}
+.logo-text{min-width:0}
+.logo-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logo-sub{font-size:10px;color:var(--text-2);letter-spacing:0.5px;display:none}
+@media(min-width:480px){
+  .logo-sub{display:block}
+  .topbar{padding:0 28px;padding-top:var(--safe-top)}
+}
+
+/* ── View switcher ── */
+.view-tabs{
+  display:flex;gap:2px;
+  background:var(--navy-4);border-radius:var(--radius-xs);padding:3px;
+  flex-shrink:0;
+}
+.view-tab{
+  padding:7px 12px;border-radius:6px;font-size:12px;font-weight:500;
+  cursor:pointer;color:var(--text-2);border:none;background:none;
+  transition:all 0.2s;white-space:nowrap;font-family:'Inter',sans-serif;
+  min-height:36px;display:flex;align-items:center;
+}
+.view-tab.active{background:var(--navy-2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+@media(min-width:480px){
+  .view-tab{padding:7px 18px;font-size:13px}
+}
+
+/* ════════════════════════════
+   TENANT PORTAL
+════════════════════════════ */
+.portal-wrap{
+  max-width:600px;margin:0 auto;
+  padding:28px 16px calc(40px + var(--safe-bottom));
+}
+@media(min-width:600px){.portal-wrap{padding:40px 24px 80px}}
+
+.portal-hero{text-align:center;margin-bottom:28px}
+.portal-eyebrow{
+  font-size:10px;font-weight:600;letter-spacing:2px;color:var(--gold);
+  margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.portal-eyebrow::before,.portal-eyebrow::after{
+  content:'';flex:1;max-width:32px;height:1px;background:var(--gold-border)
+}
+.portal-title{font-size:24px;font-weight:700;letter-spacing:-0.6px;margin-bottom:8px;line-height:1.2}
+.portal-sub{font-size:13px;color:var(--text-2);max-width:380px;margin:0 auto}
+@media(min-width:480px){
+  .portal-title{font-size:30px}
+  .portal-sub{font-size:14px}
+}
+
+/* Method tabs — always 2x2 grid */
+.method-tabs-wrap{margin:0 0 20px}
+.method-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+@media(min-width:520px){
+  .method-tabs{grid-template-columns:repeat(4,1fr)}
+}
+.method-tab{
+  background:var(--navy-3);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 8px;
+  cursor:pointer;text-align:center;transition:all 0.2s;
+  font-family:'Inter',sans-serif;
+}
+.method-tab:active{transform:scale(0.97)}
+.method-tab.active{border-color:var(--blue);background:var(--blue-dim)}
+.method-tab-icon{font-size:26px;margin-bottom:8px}
+.method-tab-label{font-size:13px;font-weight:500;color:var(--text)}
+.method-tab-bar{height:2px;border-radius:1px;background:var(--blue);margin-top:10px;opacity:0;transition:opacity 0.2s}
+.method-tab.active .method-tab-bar{opacity:1}
+
+/* Payment panel */
+.payment-panel{
+  background:var(--navy-3);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:16px;
+}
+
+/* Panel header */
+.panel-header{
+  padding:18px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;
+}
+@media(min-width:480px){.panel-header{padding:20px 24px;flex-wrap:nowrap}}
+.panel-header-left{display:flex;align-items:center;gap:12px}
+.panel-method-icon{
+  width:46px;height:46px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.icon-zelle{background:linear-gradient(135deg,#6c35de,#4b1fa8)}
+.icon-card{background:linear-gradient(135deg,#8b1a1a,#c0392b)}
+.icon-cash{background:linear-gradient(135deg,#1a5c2a,#27ae60)}
+.icon-mo{background:linear-gradient(135deg,#1a3a5c,#2980b9)}
+.panel-method-name{font-size:16px;font-weight:600;margin-bottom:2px}
+.panel-method-sub{font-size:12px;color:var(--text-2)}
+.panel-badge{
+  padding:5px 12px;border-radius:999px;font-size:11px;font-weight:500;white-space:nowrap;
+}
+.badge-free{background:var(--blue-dim);color:#79c0ff;border:1px solid var(--blue-border)}
+.badge-stripe{background:var(--red-dim);color:#ff7b72;border:1px solid rgba(248,81,73,0.3)}
+.badge-inperson{background:var(--green-dim);color:#56d364;border:1px solid var(--green-border)}
+.badge-mail{background:var(--amber-dim);color:#e3b341;border:1px solid rgba(210,153,34,0.3)}
+
+/* Info box */
+.info-box{
+  margin:16px 18px;padding:14px 16px;
+  background:var(--amber-dim);border:1px solid rgba(210,153,34,0.25);
+  border-radius:var(--radius-sm);display:flex;gap:10px;
+}
+@media(min-width:480px){.info-box{margin:20px 24px}}
+.info-icon{font-size:14px;margin-top:1px;flex-shrink:0}
+.info-text{font-size:13px;color:#e3b341;line-height:1.5}
+
+/* Detail rows */
+.detail-section{padding:0 18px 18px}
+@media(min-width:480px){.detail-section{padding:0 24px 20px}}
+.detail-label{font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--text-2);text-transform:uppercase;margin-bottom:12px}
+.detail-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 0;border-bottom:1px solid var(--border);gap:12px;
+}
+.detail-row:last-child{border-bottom:none}
+.detail-key{font-size:13px;color:var(--text-2);flex-shrink:0}
+.detail-val-wrap{display:flex;align-items:center;gap:8px;min-width:0}
+.detail-val{font-size:13px;font-weight:500;font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{
+  background:var(--navy-4);border:1px solid var(--border-2);
+  border-radius:var(--radius-xs);padding:6px 14px;
+  font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all 0.15s;
+  white-space:nowrap;flex-shrink:0;min-height:36px;
+}
+.copy-btn:active{transform:scale(0.96)}
+.copy-btn.copied{background:var(--green-dim);color:var(--green);border-color:var(--green-border)}
+
+/* Forms */
+.form-section{padding:16px 18px}
+@media(min-width:480px){.form-section{padding:20px 24px}}
+.form-title{font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)}
+.form-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+@media(min-width:400px){.form-grid{grid-template-columns:1fr 1fr}}
+.form-full{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:7px;letter-spacing:0.2px}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--navy-4);border:1px solid var(--border-2);
+  border-radius:var(--radius-xs);padding:12px 14px;
+  font-family:'Inter',sans-serif;font-size:16px;color:var(--text);
+  outline:none;transition:border-color 0.15s,box-shadow 0.15s;
+  -webkit-appearance:none;appearance:none;
+  min-height:48px;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,125,216,0.15);
+}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field select option{background:var(--navy-3);font-size:16px}
+
+/* Card strip */
+.card-strip{
+  background:var(--navy-4);border:1px solid var(--border-2);
+  border-radius:var(--radius-xs);overflow:hidden;margin-bottom:12px;
+}
+.card-strip input{
+  width:100%;background:none;border:none;padding:12px 14px;
+  font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--text);
+  outline:none;min-height:48px;
+}
+.card-strip input::placeholder{font-family:'Inter',sans-serif;color:var(--text-3);font-size:15px}
+.card-strip-row{display:flex}
+.card-strip-row input{flex:1}
+.card-strip-div-h{height:1px;background:var(--border)}
+.card-strip-div-v{width:1px;background:var(--border)}
+
+/* Submit button */
+.submit-btn{
+  width:100%;padding:15px;border:none;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  color:#0d1117;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:opacity 0.2s,transform 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  letter-spacing:0.2px;min-height:52px;
+}
+.submit-btn:active{transform:scale(0.98);opacity:0.92}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.panel-footer{padding:16px 18px;border-top:1px solid var(--border)}
+@media(min-width:480px){.panel-footer{padding:18px 24px}}
+.secure-note{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-3);justify-content:center;margin-top:10px}
+
+/* Success */
+.success-panel{
+  background:var(--navy-3);border:1px solid var(--green-border);
+  border-radius:var(--radius);padding:40px 24px;text-align:center;display:none;
+}
+.success-panel.show{display:block}
+.success-ring{
+  width:68px;height:68px;border-radius:50%;
+  border:2px solid var(--green);background:var(--green-dim);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+}
+.success-amt{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--green);letter-spacing:-1px;margin-bottom:6px}
+.success-label{font-size:14px;color:var(--text-2);margin-bottom:4px}
+.success-ref{font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace;margin-bottom:28px}
+
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(13,17,23,0.4);border-top-color:#0d1117;animation:spin 0.7s linear infinite;display:none}
+
+/* ════════════════════════════
+   MANAGER LEDGER
+════════════════════════════ */
+.ledger-wrap{
+  max-width:1060px;margin:0 auto;
+  padding:24px 16px calc(40px + var(--safe-bottom));
+}
+@media(min-width:600px){.ledger-wrap{padding:32px 24px 80px}}
+
+.ledger-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:24px;gap:12px;flex-wrap:wrap;
+}
+.ledger-title{font-size:20px;font-weight:700;letter-spacing:-0.4px;margin-bottom:4px}
+@media(min-width:480px){.ledger-title{font-size:22px}}
+.ledger-sub{font-size:13px;color:var(--text-2)}
+.ledger-actions{display:flex;gap:8px;align-items:center}
+
+.lbtn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 16px;border-radius:var(--radius-xs);
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.15s;border:none;min-height:42px;
+}
+.lbtn:active{transform:scale(0.97)}
+.lbtn-primary{background:linear-gradient(135deg,var(--gold),#b8860b);color:#0d1117}
+.lbtn-primary:hover{opacity:0.9}
+.lbtn-ghost{background:var(--navy-3);color:var(--text-2);border:1px solid var(--border-2)}
+.lbtn-ghost:hover{color:var(--text);background:var(--navy-4)}
+
+/* Stats — 2 col on mobile, 4 on desktop */
+.ledger-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;
+}
+@media(min-width:700px){.ledger-stats{grid-template-columns:repeat(4,1fr);gap:14px}}
+.lstat{
+  background:var(--navy-3);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+}
+@media(min-width:480px){.lstat{padding:18px 20px}}
+.lstat-label{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--text-2);text-transform:uppercase;margin-bottom:8px}
+.lstat-val{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:-0.5px}
+@media(min-width:480px){.lstat-val{font-size:22px}}
+.lstat-val.green{color:var(--green)}
+.lstat-val.amber{color:var(--amber)}
+.lstat-val.red{color:var(--red)}
+.lstat-val.blue{color:#79c0ff}
+.lstat-sub{font-size:11px;color:var(--text-3);margin-top:4px}
+
+/* Filter pills — scrollable on mobile */
+.filter-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px 14px;padding:0 16px;scrollbar-width:none}
+.filter-wrap::-webkit-scrollbar{display:none}
+@media(min-width:600px){.filter-wrap{margin:0 0 14px;overflow:visible}}
+.filter-row{display:flex;gap:8px;min-width:max-content;padding-bottom:2px}
+.fpill{
+  padding:7px 16px;border-radius:999px;font-size:12px;font-weight:500;
+  cursor:pointer;border:1px solid var(--border-2);
+  background:var(--navy-3);color:var(--text-2);
+  transition:all 0.15s;font-family:'Inter',sans-serif;
+  white-space:nowrap;min-height:36px;
+}
+.fpill.active{background:var(--blue-dim);color:#79c0ff;border-color:var(--blue-border)}
+.fpill:active{transform:scale(0.96)}
+
+/* Table card */
+.ltable-wrap{
+  background:var(--navy-3);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.ltable-search{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.search-icon{color:var(--text-3);font-size:14px;flex-shrink:0}
+.ltable-search input{
+  background:none;border:none;outline:none;
+  font-family:'Inter',sans-serif;font-size:15px;color:var(--text);width:100%;
+  min-height:36px;
+}
+.ltable-search input::placeholder{color:var(--text-3)}
+
+/* Responsive table — cards on mobile, table on desktop */
+.table-desktop{display:none}
+.cards-mobile{display:block}
+@media(min-width:700px){
+  .table-desktop{display:table;width:100%;border-collapse:collapse}
+  .cards-mobile{display:none}
+}
+thead tr{border-bottom:1px solid var(--border)}
+thead th{
+  padding:11px 14px;text-align:left;
+  font-size:10px;font-weight:600;color:var(--text-2);
+  text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--navy-4)}
+tbody td{padding:13px 14px;font-size:13px;color:var(--text)}
+
+/* Mobile payment cards */
+.pcard{
+  padding:16px;border-bottom:1px solid var(--border);
+  transition:background 0.1s;
+}
+.pcard:last-child{border-bottom:none}
+.pcard:active{background:var(--navy-4)}
+.pcard-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pcard-name{font-size:14px;font-weight:600}
+.pcard-amount{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pcard-bottom{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pcard-meta{font-size:12px;color:var(--text-2)}
+.pcard-del{background:none;border:none;cursor:pointer;color:var(--text-3);padding:4px;font-size:16px;margin-left:auto}
+.pcard-del:active{color:var(--red)}
+
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+.lbadge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500}
+.ldot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.lbadge.success{background:var(--green-dim);color:#56d364}.lbadge.success .ldot{background:var(--green)}
+.lbadge.pending{background:var(--amber-dim);color:#e3b341}.lbadge.pending .ldot{background:var(--amber)}
+.lbadge.failed{background:var(--red-dim);color:#ff7b72}.lbadge.failed .ldot{background:var(--red)}
+.ltype-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:var(--navy-5);color:var(--text-2);border:1px solid var(--border);font-weight:500}
+
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text-3);padding:6px 8px;border-radius:6px;transition:color 0.15s,background 0.15s;font-size:14px}
+.del-btn:hover{color:var(--red);background:var(--red-dim)}
+.del-btn:active{transform:scale(0.92)}
+
+.empty-cell{text-align:center;padding:48px;color:var(--text-3)}
+.empty-cards{text-align:center;padding:48px 24px;color:var(--text-3)}
+
+/* Modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);
+  z-index:500;align-items:flex-end;justify-content:center;
+  padding:0;
+}
+@media(min-width:520px){
+  .modal-overlay{align-items:center;padding:20px}
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--navy-3);border:1px solid var(--border-2);
+  width:100%;max-width:480px;overflow:hidden;
+  animation:slideUp 0.25s cubic-bezier(0.32,0.72,0,1);
+  border-radius:18px 18px 0 0;
+  max-height:92vh;overflow-y:auto;
+  padding-bottom:var(--safe-bottom);
+}
+@media(min-width:520px){
+  .modal{border-radius:14px;max-height:85vh}
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(min-width:520px){
+  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+}
+.modal-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--border-2);margin:10px auto 0;
+}
+@media(min-width:520px){.modal-handle{display:none}}
+.modal-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--navy-3);z-index:1;
+}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{
+  background:var(--navy-4);border:none;border-radius:50%;
+  width:30px;height:30px;cursor:pointer;color:var(--text-2);
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+}
+.modal-body{padding:18px 20px}
+.modal-footer{
+  padding:14px 20px;border-top:1px solid var(--border);
+  display:flex;gap:10px;justify-content:flex-end;
+  position:sticky;bottom:0;background:var(--navy-3);
+}
+
+/* ── Manager login gate ── */
+.login-gate{
+  display:none;position:fixed;
+  top:calc(56px + var(--safe-top));
+  left:0;right:0;bottom:0;
+  background:var(--navy);z-index:150;
+  align-items:center;justify-content:center;padding:24px;
+}
+.login-gate.open{display:flex}
+.login-card{
+  background:var(--navy-3);border:1px solid var(--border-2);
+  border-radius:18px;width:100%;max-width:360px;
+  overflow:hidden;animation:slideUp 0.25s cubic-bezier(0.32,0.72,0,1);
+}
+.login-header{
+  background:linear-gradient(135deg,#1a1f2e,#0d1117);
+  padding:28px 24px 20px;text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.login-logo-mark{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:#0d1117;
+  margin:0 auto 14px;
+}
+.login-title{font-size:17px;font-weight:700;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--text-2)}
+.login-body{padding:22px 24px}
+.login-error{
+  background:var(--red-dim);border:1px solid rgba(248,81,73,0.3);
+  border-radius:var(--radius-xs);padding:10px 14px;
+  font-size:13px;color:#ff7b72;margin-bottom:14px;display:none;
+}
+.login-footer{padding:0 24px 22px}
+.login-btn{
+  width:100%;padding:14px;border:none;border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  color:#0d1117;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:opacity 0.2s;min-height:50px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.login-btn:active{opacity:0.88}
+.login-btn:disabled{opacity:0.5;cursor:not-allowed}
+.login-hint{text-align:center;font-size:11px;color:var(--text-3);margin-top:14px}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:calc(28px + var(--safe-bottom));
+  left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--navy-2);border:1px solid var(--border-2);
+  color:var(--text);padding:12px 20px;border-radius:var(--radius-sm);
+  font-size:13px;display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:999;pointer-events:none;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast-check{color:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">V</div>
+    <div class="logo-text">
+      <div class="logo-name">VSR Property Management</div>
+      <div class="logo-sub">PAYMENT PORTAL</div>
+    </div>
+  </div>
+  <div class="view-tabs">
+    <button class="view-tab active" id="tab-resident" onclick="switchView('tenant')">Resident</button>
+    <button class="view-tab" id="tab-manager" onclick="switchView('manager')">Manager</button>
+  </div>
+</div>
+
+<!-- ══ TENANT PORTAL ══ -->
+<div id="tenant-view">
+  <div class="portal-wrap">
+    <div class="portal-hero">
+      <div class="portal-eyebrow">SECURE · INSTANT · VERIFIED</div>
+      <div class="portal-title">Resident Payment Portal</div>
+      <div class="portal-sub">Choose your preferred payment method. All submissions confirmed within one business day.</div>
+    </div>
+
+    <!-- Method tabs -->
+    <div class="method-tabs-wrap">
+      <div class="method-tabs">
+        <div class="method-tab active" onclick="selectMethod('zelle',this)">
+          <div class="method-tab-icon">⚡</div>
+          <div class="method-tab-label">Zelle</div>
+          <div class="method-tab-bar"></div>
+        </div>
+        <div class="method-tab" onclick="selectMethod('card',this)">
+          <div class="method-tab-icon">💳</div>
+          <div class="method-tab-label">Card/ACH</div>
+          <div class="method-tab-bar"></div>
+        </div>
+        <div class="method-tab" onclick="selectMethod('cash',this)">
+          <div class="method-tab-icon">💵</div>
+          <div class="method-tab-label">Cash</div>
+          <div class="method-tab-bar"></div>
+        </div>
+        <div class="method-tab" onclick="selectMethod('mo',this)">
+          <div class="method-tab-icon">📋</div>
+          <div class="method-tab-label">Money Order</div>
+          <div class="method-tab-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success screen -->
+    <div class="success-panel" id="success-panel">
+      <div class="success-ring">
+        <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="success-amt" id="s-amt">$0.00</div>
+      <div class="success-label" id="s-label">Payment submitted</div>
+      <div class="success-ref" id="s-ref">REF #VSR-PENDING</div>
+      <button class="submit-btn" style="max-width:240px;margin:0 auto" onclick="resetPortal()">Submit another payment</button>
+    </div>
+
+    <!-- ZELLE -->
+    <div class="payment-panel" id="panel-zelle">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-method-icon icon-zelle">⚡</div>
+          <div><div class="panel-method-name">Zelle</div><div class="panel-method-sub">Instant · No fees</div></div>
+        </div>
+        <div class="panel-badge badge-free">Instant · Free</div>
+      </div>
+      <div class="info-box">
+        <div class="info-icon">ℹ️</div>
+        <div class="info-text">Send to our Zelle account below, then complete the form so we can match your payment.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Zelle Account Details</div>
+        <div class="detail-row">
+          <span class="detail-key">Phone</span>
+          <div class="detail-val-wrap">
+            <span class="detail-val">+1 (239) 555-0182</span>
+            <button class="copy-btn" onclick="copyVal(this,'+1 (239) 555-0182')">Copy</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Email</span>
+          <div class="detail-val-wrap">
+            <span class="detail-val" style="font-size:12px">vsr.prop.mgmt@gmail.com</span>
+            <button class="copy-btn" onclick="copyVal(this,'vsr.prop.mgmt@gmail.com')">Copy</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Name</span>
+          <span class="detail-val" style="font-size:13px">VSR Property Management</span>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-title">Confirm your payment</div>
+        <div class="form-grid">
+          <div class="field"><label>Your name *</label><input type="text" id="z-name" placeholder="Full name" autocomplete="name"/></div>
+          <div class="field"><label>Amount sent *</label><input type="number" id="z-amt" placeholder="0.00" inputmode="decimal"/></div>
+          <div class="field"><label>Property / Unit</label>
+            <select id="z-prop"><option value="">Select property</option><option>7972 Bristol Circle</option><option>4401 Maple Ave #2B</option><option>1130 Oak Street</option></select>
+          </div>
+          <div class="field"><label>Payment type</label>
+            <select id="z-type"><option>Rent</option><option>Security Deposit</option><option>Late Fee</option><option>Maintenance Fee</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="form-full field"><label>Zelle confirmation # (optional)</label><input type="text" id="z-ref" placeholder="e.g. ZE123456789"/></div>
+      </div>
+      <div class="panel-footer">
+        <button class="submit-btn" id="z-btn" onclick="submitPayment('zelle')">
+          <div class="spinner" id="z-spinner"></div>
+          <svg id="z-icon" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#0d1117" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Confirm Zelle Payment
+        </button>
+        <div class="secure-note">
+          <svg width="11" height="11" fill="none" viewBox="0 0 16 16"><path d="M8 1L2 4v4c0 3.31 2.69 6.95 6 8 3.31-1.05 6-4.69 6-8V4L8 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          All submissions encrypted and verified by VSR Property Management
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD -->
+    <div class="payment-panel" id="panel-card" style="display:none">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-method-icon icon-card">💳</div>
+          <div><div class="panel-method-name">Card / ACH / EFT</div><div class="panel-method-sub">Credit, debit, or direct bank transfer</div></div>
+        </div>
+        <div class="panel-badge badge-stripe">Stripe Secured</div>
+      </div>
+      <div class="form-section">
+        <div class="form-grid">
+          <div class="field"><label>Full name *</label><input type="text" id="c-name" placeholder="Name on card" autocomplete="cc-name"/></div>
+          <div class="field"><label>Amount *</label><input type="number" id="c-amt" placeholder="0.00" inputmode="decimal" oninput="updateCardBtn()"/></div>
+          <div class="field"><label>Property / Unit</label>
+            <select id="c-prop"><option value="">Select property</option><option>7972 Bristol Circle</option><option>4401 Maple Ave #2B</option><option>1130 Oak Street</option></select>
+          </div>
+          <div class="field"><label>Payment type</label>
+            <select id="c-type"><option>Rent</option><option>Security Deposit</option><option>Late Fee</option><option>Maintenance Fee</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="form-full">
+          <div class="field" style="margin-bottom:6px"><label>Card details</label></div>
+          <div class="card-strip">
+            <input id="c-card" placeholder="Card number" autocomplete="cc-number" inputmode="numeric" style="border-bottom:1px solid var(--border)"/>
+            <div class="card-strip-row">
+              <input id="c-exp" placeholder="MM / YY" autocomplete="cc-exp" inputmode="numeric"/>
+              <div class="card-strip-div-v"></div>
+              <input id="c-cvc" placeholder="CVC" autocomplete="cc-csc" inputmode="numeric"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button class="submit-btn" id="c-btn" onclick="submitPayment('card')">
+          <div class="spinner" id="c-spinner"></div>
+          <svg id="c-icon" width="16" height="16" fill="none" viewBox="0 0 16 16"><rect x="1" y="4" width="14" height="10" rx="2" stroke="#0d1117" stroke-width="1.5"/><path d="M1 7h14" stroke="#0d1117" stroke-width="1.5"/></svg>
+          <span id="c-label">Pay $0.00</span>
+        </button>
+        <div class="secure-note">
+          <svg width="11" height="11" fill="none" viewBox="0 0 16 16"><path d="M8 1L2 4v4c0 3.31 2.69 6.95 6 8 3.31-1.05 6-4.69 6-8V4L8 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          256-bit SSL · Powered by Stripe · Card details never stored
+        </div>
+      </div>
+    </div>
+
+    <!-- CASH -->
+    <div class="payment-panel" id="panel-cash" style="display:none">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-method-icon icon-cash">💵</div>
+          <div><div class="panel-method-name">Cash</div><div class="panel-method-sub">In-person · Receipt issued immediately</div></div>
+        </div>
+        <div class="panel-badge badge-inperson">In-Person Only</div>
+      </div>
+      <div class="info-box">
+        <div class="info-icon">ℹ️</div>
+        <div class="info-text">Cash payments must be made in person during business hours. A signed receipt will be issued on the spot.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Office Hours</div>
+        <div class="detail-row"><span class="detail-key">Mon – Fri</span><span class="detail-val">9:00 AM – 5:00 PM</span></div>
+        <div class="detail-row"><span class="detail-key">Saturday</span><span class="detail-val">10:00 AM – 2:00 PM</span></div>
+        <div class="detail-row"><span class="detail-key">Sunday</span><span class="detail-val">Closed</span></div>
+      </div>
+      <div class="form-section">
+        <div class="form-title">Schedule your visit (optional)</div>
+        <div class="form-grid">
+          <div class="field"><label>Your name</label><input type="text" id="ca-name" placeholder="Full name" autocomplete="name"/></div>
+          <div class="field"><label>Estimated amount</label><input type="number" id="ca-amt" placeholder="0.00" inputmode="decimal"/></div>
+          <div class="field"><label>Property</label>
+            <select id="ca-prop"><option value="">Select property</option><option>7972 Bristol Circle</option><option>4401 Maple Ave #2B</option><option>1130 Oak Street</option></select>
+          </div>
+          <div class="field"><label>Preferred date</label><input type="date" id="ca-date"/></div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button class="submit-btn" onclick="submitPayment('cash')">
+          <div class="spinner" id="ca-spinner"></div>
+          <svg id="ca-icon" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="#0d1117" stroke-width="2" stroke-linecap="round"/></svg>
+          Schedule Visit
+        </button>
+        <div class="secure-note">
+          <svg width="11" height="11" fill="none" viewBox="0 0 16 16"><path d="M8 1L2 4v4c0 3.31 2.69 6.95 6 8 3.31-1.05 6-4.69 6-8V4L8 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Official receipt issued at time of payment
+        </div>
+      </div>
+    </div>
+
+    <!-- MONEY ORDER -->
+    <div class="payment-panel" id="panel-mo" style="display:none">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-method-icon icon-mo">📋</div>
+          <div><div class="panel-method-name">Money Order</div><div class="panel-method-sub">Mail or drop off payable to VSR</div></div>
+        </div>
+        <div class="panel-badge badge-mail">Mail / Drop-off</div>
+      </div>
+      <div class="info-box">
+        <div class="info-icon">ℹ️</div>
+        <div class="info-text">Make payable to <strong>VSR Property Management</strong>. Write your unit number and phone number on the memo line.</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Mailing Details</div>
+        <div class="detail-row"><span class="detail-key">Payable to</span><span class="detail-val" style="font-size:12px">VSR Property Management</span></div>
+        <div class="detail-row"><span class="detail-key">Memo line</span><span class="detail-val" style="font-size:12px">Unit # + Phone number</span></div>
+        <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">Dallas, TX</span></div>
+      </div>
+      <div class="form-section">
+        <div class="form-title">Notify us you're sending a money order</div>
+        <div class="form-grid">
+          <div class="field"><label>Your name</label><input type="text" id="mo-name" placeholder="Full name" autocomplete="name"/></div>
+          <div class="field"><label>Amount</label><input type="number" id="mo-amt" placeholder="0.00" inputmode="decimal"/></div>
+          <div class="field"><label>Property</label>
+            <select id="mo-prop"><option value="">Select property</option><option>7972 Bristol Circle</option><option>4401 Maple Ave #2B</option><option>1130 Oak Street</option></select>
+          </div>
+          <div class="field"><label>Money order #</label><input type="text" id="mo-num" placeholder="e.g. MO-123456"/></div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button class="submit-btn" onclick="submitPayment('mo')">
+          <div class="spinner" id="mo-spinner"></div>
+          <svg id="mo-icon" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="#0d1117" stroke-width="2" stroke-linecap="round"/></svg>
+          Send Notification
+        </button>
+        <div class="secure-note">
+          <svg width="11" height="11" fill="none" viewBox="0 0 16 16"><path d="M8 1L2 4v4c0 3.31 2.69 6.95 6 8 3.31-1.05 6-4.69 6-8V4L8 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          We'll confirm receipt within one business day
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MANAGER LEDGER ══ -->
+<div id="manager-view" style="display:none">
+  <div class="ledger-wrap">
+    <div class="ledger-header">
+      <div>
+        <div class="ledger-title">Payment Ledger</div>
+        <div class="ledger-sub">All properties · VSR Property Management</div>
+      </div>
+      <div class="ledger-actions">
+        <button class="lbtn lbtn-ghost" onclick="exportCSV()" style="display:none" id="export-btn">
+          <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M2 12v2h12v-2M8 2v8m-3-3l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Export
+        </button>
+        <button class="lbtn lbtn-primary" onclick="openAddModal()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="#0d1117" stroke-width="2" stroke-linecap="round"/></svg>
+          Add
+        </button>
+      </div>
+    </div>
+
+    <div class="ledger-stats">
+      <div class="lstat"><div class="lstat-label">Collected</div><div class="lstat-val green" id="ls-collected">$0</div><div class="lstat-sub" id="ls-collected-sub">—</div></div>
+      <div class="lstat"><div class="lstat-label">Pending</div><div class="lstat-val amber" id="ls-pending">$0</div><div class="lstat-sub" id="ls-pending-sub">—</div></div>
+      <div class="lstat"><div class="lstat-label">Failed</div><div class="lstat-val red" id="ls-failed">$0</div><div class="lstat-sub" id="ls-failed-sub">—</div></div>
+      <div class="lstat"><div class="lstat-label">This Month</div><div class="lstat-val blue" id="ls-month">$0</div><div class="lstat-sub">Apr 2026</div></div>
+    </div>
+
+    <div class="filter-wrap">
+      <div class="filter-row">
+        <button class="fpill active" onclick="setFilter('all',this)">All</button>
+        <button class="fpill" onclick="setFilter('succeeded',this)">Succeeded</button>
+        <button class="fpill" onclick="setFilter('pending',this)">Pending</button>
+        <button class="fpill" onclick="setFilter('failed',this)">Failed</button>
+      </div>
+    </div>
+
+    <div class="ltable-wrap">
+      <div class="ltable-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-inp" placeholder="Search tenant, property, amount…" oninput="renderLedger()"/>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="cards-mobile" id="mobile-cards"></div>
+
+      <!-- Desktop table -->
+      <table class="table-desktop">
+        <thead>
+          <tr>
+            <th>Date</th><th>Property</th><th>Tenant</th>
+            <th>Method</th><th>Type</th><th>Amount</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Payment Modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Add Payment Record</div>
+      <button class="modal-close" onclick="closeAddModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Tenant name *</label><input type="text" id="a-tenant" placeholder="Full name" autocomplete="name"/></div>
+        <div class="field"><label>Amount *</label><input type="number" id="a-amt" placeholder="0.00" inputmode="decimal"/></div>
+        <div class="field"><label>Property</label>
+          <select id="a-prop"><option>7972 Bristol Circle</option><option>4401 Maple Ave #2B</option><option>1130 Oak Street</option></select>
+        </div>
+        <div class="field"><label>Method</label>
+          <select id="a-method"><option>Zelle</option><option>Card</option><option>ACH</option><option>Cash</option><option>Money Order</option></select>
+        </div>
+        <div class="field"><label>Payment type</label>
+          <select id="a-type"><option>Rent</option><option>Security Deposit</option><option>Late Fee</option><option>Maintenance Fee</option><option>Other</option></select>
+        </div>
+        <div class="field"><label>Status</label>
+          <select id="a-status"><option value="succeeded">Succeeded</option><option value="pending">Pending</option><option value="failed">Failed</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Notes (optional)</label><input type="text" id="a-notes" placeholder="Any additional notes…"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="lbtn lbtn-ghost" onclick="closeAddModal()">Cancel</button>
+      <button class="lbtn lbtn-primary" onclick="addPaymentRecord()">Add Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- Manager Login Gate -->
+<div class="login-gate" id="login-gate">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo-mark">V</div>
+      <div class="login-title">Manager Access</div>
+      <div class="login-sub">VSR Property Management · Staff Only</div>
+    </div>
+    <div class="login-body">
+      <div class="login-error" id="login-error">Incorrect username or password.</div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="Enter username" autocomplete="username" autocapitalize="none" spellcheck="false"/>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()"/>
+      </div>
+    </div>
+    <div class="login-footer">
+      <button class="login-btn" id="login-btn" onclick="attemptLogin()">
+        <div class="spinner" id="login-spinner" style="border-top-color:#0d1117;border-color:rgba(13,17,23,0.3);border-top-color:#0d1117"></div>
+        <span id="login-btn-label">Sign In</span>
+      </button>
+      <div class="login-hint">Authorized personnel only</div>
+      <button onclick="cancelLogin()" style="width:100%;margin-top:10px;background:none;border:none;color:var(--text-2);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;padding:10px;min-height:44px;">
+        Cancel — go back to Resident portal
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span class="toast-check">✓</span><span id="toast-msg">Done</span></div>
+
+<script>
+let ledgerData=[
+  {id:1,date:'Apr 1, 2026', property:'7972 Bristol Circle',tenant:'Marcus Williams',method:'Zelle', type:'Rent',            amount:1800,status:'succeeded',ref:'ZE-9823041'},
+  {id:2,date:'Apr 1, 2026', property:'7972 Bristol Circle',tenant:'Sandra Ortega',  method:'Card',  type:'Rent',            amount:1800,status:'succeeded',ref:'pi_mock_ab1'},
+  {id:3,date:'Apr 1, 2026', property:'4401 Maple Ave #2B', tenant:'DeShawn Carter', method:'Zelle', type:'Rent',            amount:1350,status:'succeeded',ref:'ZE-9823102'},
+  {id:4,date:'Mar 15, 2026',property:'1130 Oak Street',    tenant:'Priya Nair',     method:'ACH',   type:'Security Deposit',amount:2200,status:'succeeded',ref:'ACH-00342'},
+  {id:5,date:'Apr 1, 2026', property:'4401 Maple Ave #2B', tenant:'Marcus Williams',method:'Cash',  type:'Late Fee',        amount:150, status:'succeeded',ref:'REC-0041'},
+  {id:6,date:'Apr 5, 2026', property:'1130 Oak Street',    tenant:'Priya Nair',     method:'Zelle', type:'Rent',            amount:1650,status:'pending',  ref:'ZE-pending'},
+  {id:7,date:'Mar 1, 2026', property:'7972 Bristol Circle',tenant:'Sandra Ortega',  method:'Card',  type:'Rent',            amount:1800,status:'succeeded',ref:'pi_mock_cd2'},
+  {id:8,date:'Feb 28, 2026',property:'4401 Maple Ave #2B', tenant:'DeShawn Carter', method:'Card',  type:'Rent',            amount:1350,status:'failed',   ref:'pi_fail_01'},
+];
+let activeFilter='all';
+let nextId=9;
+
+const MANAGER_USER='vsrshitnocap';
+const MANAGER_PASS='cardan0!';
+let managerAuthed=false;
+let currentView='tenant';
+
+function switchView(v){
+  currentView=v;
+  // Always close login gate when switching tabs
+  document.getElementById('login-gate').classList.remove('open');
+  document.body.style.overflow='';
+  document.getElementById('tab-resident').classList.toggle('active', v==='tenant');
+  document.getElementById('tab-manager').classList.toggle('active', v==='manager');
+  if(v==='manager' && !managerAuthed){
+    document.getElementById('tenant-view').style.display='none';
+    document.getElementById('manager-view').style.display='none';
+    document.getElementById('login-gate').classList.add('open');
+    setTimeout(()=>document.getElementById('login-user').focus(), 300);
+    return;
+  }
+  document.getElementById('tenant-view').style.display = v==='tenant' ? 'block' : 'none';
+  document.getElementById('manager-view').style.display = v==='manager' ? 'block' : 'none';
+  if(v==='manager'){ renderLedger(); document.getElementById('export-btn').style.display='inline-flex'; }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function cancelLogin(){
+  document.getElementById('login-gate').classList.remove('open');
+  document.body.style.overflow='';
+  document.getElementById('login-error').style.display='none';
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  currentView='tenant';
+  document.getElementById('tenant-view').style.display='block';
+  document.getElementById('manager-view').style.display='none';
+  document.getElementById('tab-resident').classList.add('active');
+  document.getElementById('tab-manager').classList.remove('active');
+}
+
+function attemptLogin(){
+  const user=document.getElementById('login-user').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  const err=document.getElementById('login-error');
+  const btn=document.getElementById('login-btn');
+  const spinner=document.getElementById('login-spinner');
+  const label=document.getElementById('login-btn-label');
+
+  err.style.display='none';
+  btn.disabled=true;
+  spinner.style.display='block';
+  label.textContent='Verifying…';
+
+  setTimeout(()=>{
+    spinner.style.display='none';
+    btn.disabled=false;
+    label.textContent='Sign In';
+
+    if(user===MANAGER_USER&&pass===MANAGER_PASS){
+      managerAuthed=true;
+      document.getElementById('login-gate').classList.remove('open');
+      document.body.style.overflow='';
+      document.getElementById('login-pass').value='';
+      document.getElementById('login-user').value='';
+      switchView('manager');
+      showToast('Welcome back, VSR Team');
+    } else {
+      err.style.display='block';
+      document.getElementById('login-pass').value='';
+      document.getElementById('login-pass').focus();
+    }
+  },900);
+}
+
+function selectMethod(m,tab){
+  document.querySelectorAll('.method-tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  ['zelle','card','cash','mo'].forEach(x=>document.getElementById('panel-'+x).style.display=x===m?'block':'none');
+  document.getElementById('success-panel').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function copyVal(btn,val){
+  navigator.clipboard.writeText(val).then(()=>{
+    btn.textContent='Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
+  }).catch(()=>{
+    showToast('Tap and hold to copy: '+val);
+  });
+}
+
+function updateCardBtn(){
+  const v=parseFloat(document.getElementById('c-amt').value)||0;
+  document.getElementById('c-label').textContent='Pay $'+v.toFixed(2);
+}
+
+function submitPayment(m){
+  const spinMap={zelle:'z-spinner',card:'c-spinner',cash:'ca-spinner',mo:'mo-spinner'};
+  const iconMap={zelle:'z-icon',card:'c-icon',cash:'ca-icon',mo:'mo-icon'};
+  const btnMap={zelle:'z-btn',card:'c-btn'};
+  const amtMap={zelle:'z-amt',card:'c-amt',cash:'ca-amt',mo:'mo-amt'};
+  const nameMap={zelle:'z-name',card:'c-name',cash:'ca-name',mo:'mo-name'};
+  const propMap={zelle:'z-prop',card:'c-prop',cash:'ca-prop',mo:'mo-prop'};
+  const typeMap={zelle:'z-type',card:'c-type'};
+
+  const amt=parseFloat(document.getElementById(amtMap[m])?.value)||0;
+  const sp=document.getElementById(spinMap[m]);
+  const ic=document.getElementById(iconMap[m]);
+  if(sp)sp.style.display='block';
+  if(ic)ic.style.display='none';
+  if(btnMap[m])document.getElementById(btnMap[m]).disabled=true;
+
+  setTimeout(()=>{
+    if(sp)sp.style.display='none';
+    if(ic)ic.style.display='block';
+    if(btnMap[m])document.getElementById(btnMap[m]).disabled=false;
+
+    const ref='VSR-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+String(nextId).padStart(4,'0');
+    document.getElementById('s-amt').textContent=amt>0?'$'+amt.toFixed(2):'Submitted';
+    const labels={zelle:'Zelle payment submitted',card:'Card payment processed',cash:'Visit scheduled',mo:'Notification sent'};
+    document.getElementById('s-label').textContent=labels[m];
+    document.getElementById('s-ref').textContent='REF #'+ref+' · Pending confirmation';
+
+    ['zelle','card','cash','mo'].forEach(x=>document.getElementById('panel-'+x).style.display='none');
+    document.getElementById('success-panel').classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+
+    const mLabel={zelle:'Zelle',card:'Card',cash:'Cash',mo:'Money Order'};
+    const tName=document.getElementById(nameMap[m])?.value||'Unknown Tenant';
+    const prop=document.getElementById(propMap[m])?.value||'7972 Bristol Circle';
+    const pType=typeMap[m]?document.getElementById(typeMap[m])?.value:'Other';
+    ledgerData.unshift({
+      id:nextId++,
+      date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+      property:prop,tenant:tName,method:mLabel[m],
+      type:pType||'Rent',amount:amt,status:'pending',ref
+    });
+  },1800);
+}
+
+function resetPortal(){
+  document.getElementById('success-panel').classList.remove('show');
+  document.querySelectorAll('.method-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  ['zelle','card','cash','mo'].forEach((m,i)=>document.getElementById('panel-'+m).style.display=i===0?'block':'none');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function fmt(n){return'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+function badgeHtml(s){
+  const m={succeeded:'success',pending:'pending',failed:'failed'};
+  const l={succeeded:'Succeeded',pending:'Pending',failed:'Failed'};
+  return`<span class="lbadge ${m[s]||'pending'}"><div class="ldot"></div>${l[s]||s}</span>`;
+}
+
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLedger();
+}
+
+function renderLedger(){
+  const q=(document.getElementById('search-inp')?.value||'').toLowerCase();
+  let rows=activeFilter==='all'?ledgerData:ledgerData.filter(r=>r.status===activeFilter);
+  if(q)rows=rows.filter(r=>
+    r.tenant.toLowerCase().includes(q)||r.property.toLowerCase().includes(q)||
+    r.amount.toString().includes(q)||r.method.toLowerCase().includes(q)
+  );
+
+  // Mobile cards
+  const mc=document.getElementById('mobile-cards');
+  if(rows.length===0){
+    mc.innerHTML='<div class="empty-cards">No payments found</div>';
+  }else{
+    mc.innerHTML=rows.map(r=>`
+      <div class="pcard">
+        <div class="pcard-top">
+          <div class="pcard-name">${r.tenant}</div>
+          <div class="pcard-amount">${fmt(r.amount)}</div>
+        </div>
+        <div class="pcard-bottom">
+          ${badgeHtml(r.status)}
+          <span class="ltype-tag">${r.type}</span>
+          <span class="pcard-meta">${r.method} · ${r.date}</span>
+          <button class="pcard-del" onclick="deleteRecord(${r.id})">🗑</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:6px">${r.property}</div>
+      </div>`).join('');
+  }
+
+  // Desktop table
+  const tb=document.getElementById('ledger-body');
+  if(rows.length===0){
+    tb.innerHTML=`<tr><td colspan="8" class="empty-cell">No payments found</td></tr>`;
+  }else{
+    tb.innerHTML=rows.map(r=>`
+      <tr>
+        <td style="color:var(--text-2);white-space:nowrap">${r.date}</td>
+        <td style="font-size:12px">${r.property}</td>
+        <td style="font-weight:500">${r.tenant}</td>
+        <td style="color:var(--text-2)">${r.method}</td>
+        <td><span class="ltype-tag">${r.type}</span></td>
+        <td class="mono" style="font-weight:500">${fmt(r.amount)}</td>
+        <td>${badgeHtml(r.status)}</td>
+        <td><button class="del-btn" onclick="deleteRecord(${r.id})">🗑</button></td>
+      </tr>`).join('');
+  }
+
+  // Stats
+  const c=ledgerData.filter(r=>r.status==='succeeded');
+  const p=ledgerData.filter(r=>r.status==='pending');
+  const f=ledgerData.filter(r=>r.status==='failed');
+  const mo=ledgerData.filter(r=>r.status==='succeeded'&&r.date.includes('Apr 2026'));
+  document.getElementById('ls-collected').textContent=fmt(c.reduce((s,r)=>s+r.amount,0));
+  document.getElementById('ls-collected-sub').textContent=c.length+' payment'+(c.length!==1?'s':'');
+  document.getElementById('ls-pending').textContent=fmt(p.reduce((s,r)=>s+r.amount,0));
+  document.getElementById('ls-pending-sub').textContent=p.length+' awaiting';
+  document.getElementById('ls-failed').textContent=fmt(f.reduce((s,r)=>s+r.amount,0));
+  document.getElementById('ls-failed-sub').textContent=f.length+' transaction'+(f.length!==1?'s':'');
+  document.getElementById('ls-month').textContent=fmt(mo.reduce((s,r)=>s+r.amount,0));
+}
+
+function deleteRecord(id){
+  ledgerData=ledgerData.filter(r=>r.id!==id);
+  renderLedger();showToast('Record removed');
+}
+
+function openAddModal(){
+  document.getElementById('add-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAddModal(){
+  document.getElementById('add-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function addPaymentRecord(){
+  const tenant=document.getElementById('a-tenant').value.trim();
+  const amt=parseFloat(document.getElementById('a-amt').value)||0;
+  if(!tenant||amt<=0){alert('Please enter a tenant name and amount.');return}
+  ledgerData.unshift({
+    id:nextId++,
+    date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    property:document.getElementById('a-prop').value,
+    tenant,method:document.getElementById('a-method').value,
+    type:document.getElementById('a-type').value,
+    amount:amt,status:document.getElementById('a-status').value,
+    ref:'VSR-MANUAL-'+String(nextId).padStart(4,'0'),
+  });
+  closeAddModal();renderLedger();showToast('Payment record added');
+}
+
+function exportCSV(){
+  const h=['Date','Property','Tenant','Method','Type','Amount','Status','Ref'];
+  const rows=ledgerData.map(r=>[r.date,r.property,r.tenant,r.method,r.type,'$'+r.amount,r.status,r.ref]);
+  const csv=[h,...rows].map(r=>r.map(v=>'"'+v+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='VSR-Payments-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();showToast('CSV exported');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+document.getElementById('add-modal').addEventListener('click',function(e){
+  if(e.target===this)closeAddModal();
+});
+
+renderLedger();
+</script>
+</body>
+</html>

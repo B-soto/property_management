@@ -19,15 +19,19 @@ tenant_list, tenant_detail = nested_views(TenantViewSet)
 applicant_list, applicant_detail = nested_views(ApplicantViewSet, detail_actions={'put': 'update', 'patch': 'update', 'delete': 'destroy'})
 appliance_list, appliance_detail = nested_views(ApplianceViewSet)
 maintenance_list, maintenance_detail = nested_views(MaintenanceRequestViewSet)
+analytics_detail = PropertyAnalyticsViewSet.as_view({'get': 'retrieve'})
 
 urlpatterns = [
     path('api/register/', register_user, name='register_user'),
+    path('api/tenant/dashboard/', tenant_dashboard, name='tenant-dashboard'),
+    path('api/tenant/maintenance/', tenant_maintenance, name='tenant-maintenance'),
     # Legal Documents
     path('project/<int:property_id>/legal-documents/', legal_list, name='legal-documents-list'),
     path('project/<int:property_id>/legal-documents/<int:pk>/', legal_detail, name='legal-document-detail'),
     # Tenants
     path('project/<int:property_id>/tenants/', tenant_list, name='tenants-list'),
     path('project/<int:property_id>/tenants/<int:pk>/', tenant_detail, name='tenant-detail'),
+    path('project/<int:property_id>/tenants/<int:tenant_id>/create-login/', create_tenant_login, name='create-tenant-login'),
     # Applicants
     path('project/<int:property_id>/applicants/', applicant_list, name='applicants-list'),
     path('project/<int:property_id>/applicants/<int:pk>/', applicant_detail, name='applicant-detail'),
@@ -37,6 +41,8 @@ urlpatterns = [
     # Maintenance
     path('project/<int:property_id>/maintenance/', maintenance_list, name='maintenance-list'),
     path('project/<int:property_id>/maintenance/<int:pk>/', maintenance_detail, name='maintenance-detail'),
+    # Analytics
+    path('project/<int:property_id>/analytics/', analytics_detail, name='property-analytics'),
 ] + router.urls
 
 

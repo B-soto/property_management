@@ -15,6 +15,7 @@ import Register from "./components/Register";
 import NavBar from "./components/NavBar";
 import Delete from "./components/Delete";
 import Edit from "./components/Edit";
+import TenantDashboard from "./components/TenantDashboard";
 
 function App() {
   const myWidth = 220;
@@ -55,6 +56,11 @@ function App() {
               <Route path="/delete/:id" element={
                 <ProtectedRoute>
                   <Delete />
+                </ProtectedRoute>
+              }></Route>
+              <Route path="/tenant/dashboard/*" element={
+                <ProtectedRoute>
+                  <TenantDashboard />
                 </ProtectedRoute>
               }></Route>
             </Routes>

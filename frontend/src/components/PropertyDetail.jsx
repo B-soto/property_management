@@ -35,6 +35,7 @@ import Applicants from './property-sections/Applicants';
 import Appliances from './property-sections/Appliances';
 import Maintenance from './property-sections/Maintenance';
 import Analytics from './property-sections/Analytics';
+import Payments from './property-sections/Payments';
 
 const PropertyDetail = () => {
   const { propertyId } = useParams();
@@ -56,6 +57,7 @@ const PropertyDetail = () => {
     { id: 'applicants', label: 'Applicants', icon: <ApplicantsIcon />, path: 'applicants' },
     { id: 'appliances', label: 'Appliances', icon: <AppliancesIcon />, path: 'appliances' },
     { id: 'maintenance', label: 'Maintenance', icon: <MaintenanceIcon />, path: 'maintenance' },
+    { id: 'payments', label: 'Payments', icon: <FinancialIcon />, path: 'payments' },
     { id: 'analytics', label: 'Analytics', icon: <AnalyticsIcon />, path: 'analytics' }
   ];
 
@@ -206,6 +208,7 @@ const PropertyDetail = () => {
         <Route path="applicants" element={<Applicants property={property} />} />
         <Route path="appliances" element={<Appliances property={property} />} />
         <Route path="maintenance" element={<Maintenance property={property} />} />
+        <Route path="payments" element={<Payments property={property} />} />
         <Route path="analytics" element={<Analytics property={property} />} />
         {/* Default route */}
         <Route path="" element={<PropertyOverview property={property} />} />

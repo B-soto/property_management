@@ -2,23 +2,28 @@ from rest_framework import serializers
 from .models import *
 
 
-class ProjectSerialzier(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ('id', 'name', 'owner', 'projectmanager', 'start_date', 'end_date', 'comments', 'status')
 
 
-class ProjectManagerSerialzier(serializers.ModelSerializer):
+class ProjectManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectManager
         fields = ('id', 'name')
 
 
 class TenantSerializer(serializers.ModelSerializer):
+    has_login = serializers.SerializerMethodField()
+
     class Meta:
         model = Tenant
-        fields = ('id', 'name', 'email', 'phone', 'lease_start', 'lease_end', 'rent_amount', 'is_current', 'notes', 'created')
+        fields = ('id', 'name', 'email', 'phone', 'lease_start', 'lease_end', 'rent_amount', 'is_current', 'notes', 'created', 'has_login')
         read_only_fields = ('created',)
+
+    def get_has_login(self, obj):
+        return obj.user_account.exists()
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
@@ -35,10 +40,22 @@ class ApplianceSerializer(serializers.ModelSerializer):
 
 
 class MaintenanceRequestSerializer(serializers.ModelSerializer):
+    submitted_by_name = serializers.SerializerMethodField()
+
+    def get_submitted_by_name(self, obj):
+        return obj.submitted_by.username if obj.submitted_by else None
+
     class Meta:
         model = MaintenanceRequest
-        fields = ('id', 'title', 'description', 'priority', 'status', 'cost', 'created_date', 'completed_date', 'notes')
+        fields = ('id', 'title', 'description', 'priority', 'status', 'cost', 'created_date', 'completed_date', 'notes', 'photo', 'submitted_by_name')
         read_only_fields = ('created_date',)
+
+
+class TenantMaintenanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MaintenanceRequest
+        fields = ('id', 'title', 'description', 'priority', 'status', 'photo', 'created_date')
+        read_only_fields = ('status', 'created_date')
 
 
 class LegalDocumentSerializer(serializers.ModelSerializer):

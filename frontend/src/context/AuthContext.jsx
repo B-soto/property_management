@@ -39,12 +39,11 @@ export const AuthProvider = ({ children }) => {
         }
       });
 
-      // If request succeeds, user is authenticated
-      // We'll decode the token to get user info
       const tokenData = JSON.parse(atob(accessToken.split('.')[1]));
       setUser({
         id: tokenData.user_id,
-        // We'll add more user details later when we create a user profile endpoint
+        username: tokenData.username,
+        role: tokenData.role || 'landlord',
       });
       setIsAuthenticated(true);
       
@@ -72,15 +71,16 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
 
-      // Decode token to get user info
       const tokenData = JSON.parse(atob(access.split('.')[1]));
+      const role = tokenData.role || 'landlord';
       setUser({
         id: tokenData.user_id,
-        username: username, // We know this from login
+        username: tokenData.username || username,
+        role,
       });
       setIsAuthenticated(true);
 
-      return { success: true };
+      return { success: true, role };
     } catch (error) {
       return { 
         success: false, 

@@ -27,8 +27,8 @@ const Home = () => {
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <Box 
-        sx={{ 
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        sx={{
+          background: "linear-gradient(135deg, #0c2340 0%, #0d3d5c 50%, #0e4f6e 100%)",
           color: "white",
           py: 12,
           position: "relative",
@@ -224,12 +224,12 @@ const Home = () => {
               textAlign: "center", 
               p: 4,
               border: "1px solid",
-              borderColor: "grey.200",
+              borderColor: "divider",
               borderRadius: 4,
               transition: "all 0.3s ease",
               "&:hover": {
                 transform: "translateY(-8px)",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                boxShadow: "0 20px 40px rgba(6,182,212,0.12)",
                 borderColor: "primary.main"
               }
             }}>
@@ -264,12 +264,12 @@ const Home = () => {
               textAlign: "center", 
               p: 4,
               border: "1px solid",
-              borderColor: "grey.200",
+              borderColor: "divider",
               borderRadius: 4,
               transition: "all 0.3s ease",
               "&:hover": {
                 transform: "translateY(-8px)",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                boxShadow: "0 20px 40px rgba(6,182,212,0.12)",
                 borderColor: "primary.main"
               }
             }}>
@@ -304,12 +304,12 @@ const Home = () => {
               textAlign: "center", 
               p: 4,
               border: "1px solid",
-              borderColor: "grey.200",
+              borderColor: "divider",
               borderRadius: 4,
               transition: "all 0.3s ease",
               "&:hover": {
                 transform: "translateY(-8px)",
-                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                boxShadow: "0 20px 40px rgba(6,182,212,0.12)",
                 borderColor: "primary.main"
               }
             }}>
@@ -341,9 +341,10 @@ const Home = () => {
 
         <Box 
           sx={{ 
-            background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-            borderRadius: 6, 
-            p: 8, 
+            background: "linear-gradient(135deg, #1a1f2e 0%, #1e2a3a 100%)",
+            border: "1px solid #2a3142",
+            borderRadius: 6,
+            p: 8,
             textAlign: "center",
             position: "relative",
             overflow: "hidden"

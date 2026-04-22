@@ -28,15 +28,15 @@ import { Logout as LogoutIcon, AccountCircle } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const CYAN = "#06b6d4";
-const CYAN_DIM = "rgba(6,182,212,0.08)";
-const CYAN_DIM_HOVER = "rgba(6,182,212,0.14)";
+const CYAN_DIM = "rgba(6,182,212,0.1)";
+const CYAN_DIM_HOVER = "rgba(6,182,212,0.16)";
 
 const navItemSx = (selected) => ({
   borderRadius: "6px",
   mx: 1,
-  color: selected ? CYAN : "#888",
+  color: selected ? CYAN : "#94a3b8",
   bgcolor: selected ? CYAN_DIM : "transparent",
-  "&:hover": { bgcolor: CYAN_DIM_HOVER, color: "#fff" },
+  "&:hover": { bgcolor: CYAN_DIM_HOVER, color: "#e2e8f0" },
   transition: "all 0.15s ease",
 });
 
@@ -50,7 +50,7 @@ export default function NavBar(props) {
   const handleLogout = () => logout();
 
   const myDrawer = (
-    <Box sx={{ bgcolor: "#0d0d0d", height: "100%", borderRight: "1px solid #1a1a1a" }}>
+    <Box sx={{ bgcolor: "#13161f", height: "100%", borderRight: "1px solid #222838" }}>
       <Toolbar />
 
       {/* Logo */}
@@ -63,14 +63,14 @@ export default function NavBar(props) {
             <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: CYAN, lineHeight: 1.1 }}>
               PropManager
             </Typography>
-            <Typography sx={{ fontSize: "0.6rem", fontWeight: 700, color: "#333", letterSpacing: 2 }}>
+            <Typography sx={{ fontSize: "0.6rem", fontWeight: 700, color: "#475569", letterSpacing: 2 }}>
               PRO
             </Typography>
           </Box>
         </Stack>
       </Box>
 
-      <Divider sx={{ borderColor: "#1a1a1a" }} />
+      <Divider sx={{ borderColor: "#222838" }} />
 
       <Box sx={{ overflow: "auto", px: 1, py: 2 }}>
         <List dense>
@@ -89,10 +89,10 @@ export default function NavBar(props) {
           </ListItem>
         </List>
 
-        {isAuthenticated && (
+        {isAuthenticated && user?.role !== 'tenant' && (
           <>
-            <Divider sx={{ borderColor: "#1a1a1a", my: 1.5 }} />
-            <Typography sx={{ px: 2, pb: 1, fontSize: "0.65rem", fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: 1.5 }}>
+            <Divider sx={{ borderColor: "#222838", my: 1.5 }} />
+            <Typography sx={{ px: 2, pb: 1, fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: 1.5 }}>
               Properties
             </Typography>
             <List dense>
@@ -102,7 +102,6 @@ export default function NavBar(props) {
                   <ListItemText primary="My Properties" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.875rem" }} />
                 </ListItemButton>
               </ListItem>
-
               <ListItem disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton component={Link} to="/create" selected={"/create" === path} sx={navItemSx("/create" === path)}>
                   <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}><AddIcon fontSize="small" /></ListItemIcon>
@@ -112,10 +111,39 @@ export default function NavBar(props) {
             </List>
           </>
         )}
+
+        {isAuthenticated && user?.role === 'tenant' && (
+          <>
+            <Divider sx={{ borderColor: "#222838", my: 1.5 }} />
+            <Typography sx={{ px: 2, pb: 1, fontSize: "0.65rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", letterSpacing: 1.5 }}>
+              My Portal
+            </Typography>
+            <List dense>
+              <ListItem disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton component={Link} to="/tenant/dashboard" selected={path === "/tenant/dashboard"} sx={navItemSx(path === "/tenant/dashboard")}>
+                  <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}><ViewList fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Rent Info" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.875rem" }} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton component={Link} to="/tenant/dashboard/maintenance" selected={path.includes("maintenance")} sx={navItemSx(path.includes("maintenance"))}>
+                  <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}><AddIcon fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Maintenance" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.875rem" }} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton component={Link} to="/tenant/dashboard/payments" selected={path.includes("payments")} sx={navItemSx(path.includes("payments"))}>
+                  <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}><ViewList fontSize="small" /></ListItemIcon>
+                  <ListItemText primary="Pay Rent" primaryTypographyProps={{ fontWeight: 600, fontSize: "0.875rem" }} />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </>
+        )}
       </Box>
 
       {/* Bottom user section */}
-      <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0, p: 2, borderTop: "1px solid #1a1a1a", bgcolor: "#0d0d0d" }}>
+      <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0, p: 2, borderTop: "1px solid #222838", bgcolor: "#13161f" }}>
         {isAuthenticated ? (
           <>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5, px: 0.5 }}>
@@ -124,7 +152,7 @@ export default function NavBar(props) {
                 <Typography sx={{ fontSize: "0.8rem", fontWeight: 600, color: "#fff" }}>
                   {user?.username || "User"}
                 </Typography>
-                <Typography sx={{ fontSize: "0.7rem", color: "#444" }}>Logged in</Typography>
+                <Typography sx={{ fontSize: "0.7rem", color: "#64748b" }}>Logged in</Typography>
               </Box>
             </Box>
             <Button
@@ -133,7 +161,7 @@ export default function NavBar(props) {
               size="small"
               startIcon={<LogoutIcon />}
               onClick={handleLogout}
-              sx={{ borderColor: "#2a2a2a", color: "#666", "&:hover": { borderColor: "#ef4444", color: "#ef4444", bgcolor: "rgba(239,68,68,0.05)" }, borderRadius: "6px", textTransform: "none", fontWeight: 600 }}
+              sx={{ borderColor: "#2a3142", color: "#94a3b8", "&:hover": { borderColor: "#ef4444", color: "#ef4444", bgcolor: "rgba(239,68,68,0.08)" }, borderRadius: "6px", textTransform: "none", fontWeight: 600 }}
             >
               Logout
             </Button>
@@ -145,7 +173,7 @@ export default function NavBar(props) {
               Login
             </Button>
             <Button fullWidth component={Link} to="/register" variant="outlined" size="small"
-              sx={{ borderColor: "#2a2a2a", color: "#888", "&:hover": { borderColor: "#fff", color: "#fff" }, borderRadius: "6px", textTransform: "none", fontWeight: 600 }}>
+              sx={{ borderColor: "#2a3142", color: "#94a3b8", "&:hover": { borderColor: "#e2e8f0", color: "#e2e8f0" }, borderRadius: "6px", textTransform: "none", fontWeight: 600 }}>
               Register
             </Button>
           </Stack>
@@ -161,8 +189,8 @@ export default function NavBar(props) {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          bgcolor: "#0d0d0d",
-          borderBottom: "1px solid #1a1a1a",
+          bgcolor: "#13161f",
+          borderBottom: "1px solid #222838",
           boxShadow: "none",
         }}
       >
@@ -179,32 +207,32 @@ export default function NavBar(props) {
               <Typography sx={{ fontWeight: 800, color: "#fff", fontSize: "1.1rem", lineHeight: 1 }}>
                 PropManager Pro
               </Typography>
-              <Typography sx={{ color: "#333", fontWeight: 600, fontSize: "0.6rem", letterSpacing: 2 }}>
+              <Typography sx={{ color: "#475569", fontWeight: 600, fontSize: "0.6rem", letterSpacing: 2 }}>
                 SOUTHWEST FLORIDA
               </Typography>
             </Box>
           </Stack>
 
           <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
-            <IconButton component={Link} to="/projects" sx={{ color: "#555", "&:hover": { color: CYAN } }}>
+            <IconButton component={Link} to="/projects" sx={{ color: "#64748b", "&:hover": { color: CYAN } }}>
               <Dashboard fontSize="small" />
             </IconButton>
-            <IconButton component={Link} to="/create" sx={{ color: "#555", "&:hover": { color: CYAN } }}>
+            <IconButton component={Link} to="/create" sx={{ color: "#64748b", "&:hover": { color: CYAN } }}>
               <AddIcon fontSize="small" />
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
 
-      <Drawer variant="permanent" sx={{ display: { xs: "none", sm: "block" }, width: drawerWidth, flexShrink: 0, [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box", bgcolor: "#0d0d0d", border: "none" } }}>
+      <Drawer variant="permanent" sx={{ display: { xs: "none", sm: "block" }, width: drawerWidth, flexShrink: 0, [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box", bgcolor: "#13161f", border: "none" } }}>
         {myDrawer}
       </Drawer>
 
-      <Drawer variant="temporary" open={open} onClose={() => setOpen(false)} sx={{ display: { xs: "block", sm: "none" }, width: drawerWidth, flexShrink: 0, [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box", bgcolor: "#0d0d0d" } }}>
+      <Drawer variant="temporary" open={open} onClose={() => setOpen(false)} sx={{ display: { xs: "block", sm: "none" }, width: drawerWidth, flexShrink: 0, [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box", bgcolor: "#13161f" } }}>
         {myDrawer}
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: "#0e0e0e", minHeight: "100vh" }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: "#0f1117", minHeight: "100vh" }}>
         <Toolbar sx={{ minHeight: 64 }} />
         {content}
       </Box>

@@ -10,7 +10,9 @@ import {
   Build as BuildIcon,
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  CheckCircle as CloseIcon,
+  AttachFile as AttachIcon,
 } from '@mui/icons-material';
 import AxiosInstance from '../Axios';
 
@@ -138,6 +140,16 @@ const Maintenance = ({ property }) => {
     }
   };
 
+  const handleCloseRequest = async (req) => {
+    try {
+      await AxiosInstance.patch(`${baseUrl}${req.id}/`, { status: 'completed' });
+      showSnackbar('Request closed');
+      fetchRequests();
+    } catch {
+      showSnackbar('Failed to close request', 'error');
+    }
+  };
+
   const openCount = requests.filter((r) => r.status === 'open').length;
   const completedCount = requests.filter((r) => r.status === 'completed').length;
   const totalCost = requests
@@ -181,6 +193,8 @@ const Maintenance = ({ property }) => {
                         <TableCell>Title</TableCell>
                         <TableCell>Priority</TableCell>
                         <TableCell>Status</TableCell>
+                        <TableCell>Submitted By</TableCell>
+                        <TableCell>Photo</TableCell>
                         <TableCell>Cost</TableCell>
                         <TableCell>Created</TableCell>
                         <TableCell align="center">Actions</TableCell>
@@ -204,6 +218,12 @@ const Maintenance = ({ property }) => {
                               size="small"
                             />
                           </TableCell>
+                          <TableCell>{req.submitted_by_name || '—'}</TableCell>
+                          <TableCell>
+                            {req.photo
+                              ? <a href={req.photo} target="_blank" rel="noreferrer"><AttachIcon fontSize="small" /></a>
+                              : '—'}
+                          </TableCell>
                           <TableCell>
                             {req.cost != null ? `$${parseFloat(req.cost).toLocaleString()}` : '—'}
                           </TableCell>
@@ -211,6 +231,11 @@ const Maintenance = ({ property }) => {
                             {req.created_date ? new Date(req.created_date).toLocaleDateString() : '—'}
                           </TableCell>
                           <TableCell align="center">
+                            {req.status === 'open' || req.status === 'in_progress' ? (
+                              <IconButton size="small" color="success" onClick={() => handleCloseRequest(req)} title="Close request">
+                                <CloseIcon fontSize="small" />
+                              </IconButton>
+                            ) : null}
                             <IconButton size="small" onClick={() => openEdit(req)}>
                               <EditIcon fontSize="small" />
                             </IconButton>

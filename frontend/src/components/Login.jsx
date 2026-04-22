@@ -46,9 +46,9 @@ const Login = () => {
     setError("");
     
     const result = await login(data.username, data.password);
-    
+
     if (result.success) {
-      navigate("/");
+      navigate(result.role === 'tenant' ? '/tenant/dashboard' : '/');
     } else {
       setError(result.error);
     }
@@ -63,8 +63,8 @@ const Login = () => {
         borderRadius: 4,
         overflow: "hidden"
       }}>
-        <Box sx={{ 
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        <Box sx={{
+          background: "linear-gradient(135deg, #0c2340 0%, #0e4f6e 100%)",
           color: "white",
           p: 4,
           textAlign: "center"
@@ -114,9 +114,9 @@ const Login = () => {
                   py: 1.5,
                   borderRadius: 2,
                   fontWeight: 600,
-                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  background: "linear-gradient(135deg, #0891b2 0%, #06b6d4 100%)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)"
+                    background: "linear-gradient(135deg, #0e7490 0%, #0891b2 100%)"
                   }
                 }}
               >
